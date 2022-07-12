@@ -2,3 +2,4 @@ pandas
 scikit-learn==1.1.1
 numpy
 missingpy==0.2.0
+imbalanced-learn==0.9.1
