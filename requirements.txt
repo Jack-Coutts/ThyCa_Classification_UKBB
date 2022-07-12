@@ -1,3 +1,4 @@
 pandas
-sklearn
+scikit-learn==1.1.1
 numpy
+missingpy==0.2.0
