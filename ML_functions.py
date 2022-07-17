@@ -58,7 +58,7 @@ def miss_forest_imputation(df):
 
     con, cat = find_cat_or_con_columns(df)
 
-    imputer = MissForest(max_iter=5)  # Initiate imputer
+    imputer = MissForest(max_iter=5)  # Initiate missforest
     # Carry out imputation, specified categorical column indexes
     imputed = imputer.fit_transform(df, cat_vars=[i for i, x in enumerate(list(df.columns)) if x in cat])
     imputed_df = pd.DataFrame(imputed, columns=df.columns)
