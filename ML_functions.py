@@ -42,9 +42,9 @@ def find_cat_or_con_columns(dataframe):
 
     uniques = [len(set([i for i in a if pd.notna(i)])) for a in columns] # Num of unique values in a column
 
-    continuous_indexes = [i for i, c in enumerate(uniques) if c > 100] # Indexes of continuous columns
+    continuous_indexes = [i for i, c in enumerate(uniques) if c > 50] # Indexes of continuous columns
 
-    categorical_indexes = [i for i, c in enumerate(uniques) if c <= 100] # Indexes of categorical columns
+    categorical_indexes = [i for i, c in enumerate(uniques) if c <= 50] # Indexes of categorical columns
 
     con_cols = [dataframe.columns[x] for x in continuous_indexes] # List containing continuous columns names
 
@@ -59,11 +59,11 @@ def miss_forest_imputation(df):
     con, cat = find_cat_or_con_columns(df)
 
     imputer = MissForest(max_iter=5)  # Initiate imputer
-    imputed = imputer.fit_transform(df, cat_vars=cat)  # Carry out imputation, specified categorical columns
+    # Carry out imputation, specified categorical column indexes
+    imputed = imputer.fit_transform(df, cat_vars=[i for i, x in enumerate(list(df.columns)) if x in cat])
+    imputed_df = pd.DataFrame(imputed, columns=df.columns)
 
-
-
-    pass
+    return imputed_df
 
 
 # Feature scaling
