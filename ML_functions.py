@@ -7,7 +7,6 @@ sys.modules['sklearn.neighbors.base'] = sklearn.neighbors._base
 from missingpy import MissForest  # Import package for MissForest
 
 
-
 # Manual feature selection from tsv
 
 
@@ -44,10 +43,11 @@ def find_cat_or_con_columns(dataframe):
 def miss_forest_imputation(df):
 
     con, cat = find_cat_or_con_columns(df)
+    cat_indexes = [i for i, x in enumerate(list(df.columns)) if x in cat]
 
     imputer = MissForest(max_iter=5)  # Initiate missforest
     # Carry out imputation, specified categorical column indexes
-    imputed = imputer.fit_transform(df, cat_vars=[i for i, x in enumerate(list(df.columns)) if x in cat])
+    imputed = imputer.fit_transform(df, cat_vars=cat_indexes)
     imputed_df = pd.DataFrame(imputed, columns=df.columns)
 
     return imputed_df
