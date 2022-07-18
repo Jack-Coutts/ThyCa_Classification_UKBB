@@ -10,6 +10,22 @@ from missingpy import MissForest  # Import package for MissForest
 # Manual feature selection from tsv
 
 
+# Stopwatch to time functions
+class Stopwatch:
+
+    # Initiate constructor
+    def __init__(self):
+        self.start = timer()
+        self.end = None
+        self.runtime = None
+
+    # Stop stopwatch
+    def stop(self):
+        self.end = timer()
+        self.runtime = self.end - self.start
+        return self.runtime
+
+
 # Produce test/train split from csv/tsv file
 def split_tsv(file_path, sep='\t', test_size=0.2):
 
