@@ -67,7 +67,7 @@ def cat_con_cols(df):
 # Extratrees imputer - equivalent to missforest
 def extra_trees_imputer(dataframe, cat, con, random_state):
 
-    cat_imputer = IterativeImputer(estimator=ExtraTreesClassifier(n_estimators=10,n_jobs=-1, verbose=0),
+    cat_imputer = IterativeImputer(estimator=ExtraTreesClassifier(n_estimators=10, n_jobs=-1, verbose=0),
                                    initial_strategy='most_frequent', max_iter=5, random_state=random_state, verbose=2)
 
     imputed_cat = cat_imputer.fit_transform(dataframe[cat])
