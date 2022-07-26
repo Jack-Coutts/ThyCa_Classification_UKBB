@@ -1,11 +1,8 @@
 pandas
-scikit-learn==1.1.1
+scikit-learn
 numpy
-imbalanced-learn==0.9.1
-missingno==0.5.1
-matplotlib==3.5.2
-dython==0.7.1
-missingpy==0.2.0
-memory-profiler==0.60.0
-requests
-
+imbalanced-learn
+missingno
+matplotlib
+dython
+memory_profiler
