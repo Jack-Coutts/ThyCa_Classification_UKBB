@@ -75,8 +75,9 @@ def preprocessor():
 
     parser = argparse.ArgumentParser(description='Data Preprocessing of UK Biobank Data')  # Initialise parser
     parser.add_argument('--dataset', help='TSV file containing participant data', required=True)
-    parser.add_argument('--onehot', help='Should one hot encoding be applied.', required=True, default=False)
+    parser.add_argument('--onehot', help='Should one hot encoding be applied.', default=False)
     parser.add_argument('--random_state', required=True)
+    parser.add_argument('--logfile', help='name of log file', required=True)
     args = parser.parse_args()
 
     """ Set up logging for function """
@@ -85,7 +86,7 @@ def preprocessor():
     current_filename = Path(__file__).stem
 
     # Logger configuration
-    logging.basicConfig(filename=f'{current_filename}.log', filemode='w',
+    logging.basicConfig(filename=args.logfile, filemode='w',
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         level=logging.DEBUG, datefmt='%d-%m-%Y %H:%M:%S')
 
