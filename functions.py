@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split, StratifiedKFold  # test_tr
 from sklearn.experimental import enable_iterative_imputer  # Iterative imputer experimental so need to enable it
 from sklearn.impute import IterativeImputer  # Once enabled iterative imputer can be imported
 from sklearn.ensemble import ExtraTreesRegressor, ExtraTreesClassifier  # Imputation
-from sklearn.preprocessing import MinMaxScaler, OneHotEncoder  # Normalisation & Encoding
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, OrdinalEncoder  # Normalisation & Encoding
 from imblearn.combine import SMOTETomek  # Sampling
 from sklearn.feature_selection import RFE, RFECV  # Recursive feature elimination - feature selection
 from sklearn.pipeline import Pipeline
@@ -64,23 +64,24 @@ def cat_con_cols(df):
     return cat, con
 
 
-# Extratrees imputer - equivalent to missforest
-def extra_trees_imputer(dataframe, cat, con, random_state):
+# Categorical imputation using extratreesclassifier
+def categorical_imputer(df, cat, random_state):
 
-    cat_imputer = IterativeImputer(estimator=ExtraTreesClassifier(n_estimators=10, n_jobs=-1, verbose=0),
-                                   initial_strategy='most_frequent', max_iter=5, random_state=random_state, verbose=2)
+    cat_imputer = IterativeImputer(estimator=ExtraTreesClassifier(n_estimators=30, n_jobs=-1, verbose=0),
+                                   initial_strategy='most_frequent', max_iter=5, random_state=random_state, verbose=0)
 
-    imputed_cat = cat_imputer.fit_transform(dataframe[cat])
+    imputed_cat = cat_imputer.fit_transform(df[cat])
+    df.loc[:, cat] = imputed_cat
+    return df
 
-    con_imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=10, n_jobs=-1, verbose=0),
-                                   initial_strategy='mean', max_iter=5, random_state=random_state, verbose=2)
 
-    imputed_con = con_imputer.fit_transform(dataframe[con])
+# Continuous imputation using bayesian ridge
+def continuous_data(df, con, random_state):
 
-    dataframe.loc[:, cat] = imputed_cat
-    dataframe.loc[:, con] = imputed_con
-
-    return dataframe
+    con_imputer = IterativeImputer(initial_strategy='mean', max_iter=5, random_state=random_state, verbose=0)
+    imputed_con = con_imputer.fit_transform(df[con])
+    df.loc[:, con] = imputed_con
+    return df
 
 
 # Normalised feature scaling
