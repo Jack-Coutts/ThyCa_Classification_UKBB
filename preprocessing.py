@@ -94,7 +94,7 @@ def preprocessor():
 
     """ Conduct preprocessing """
 
-    X_train, X_test, y_train, y_test = split_tsv(args.dataset, args.random_state)  # Test-Train split
+    X_train, X_test, y_train, y_test = split_tsv(args.dataset, int(args.random_state))  # Test-Train split
     logging.info(f'Test-train split complete.')
 
     cat, con = cat_con_cols(X_train)  # Get the column names of the continuous and nominal data
@@ -105,14 +105,14 @@ def preprocessor():
     X_train = minmax_scaling(X_train, con)  # Normalisation
     logging.info(f'Data normalisation complete.')
 
-    X_train = categorical_imputer(X_train, cat, args.random_state)  # Imputation
+    X_train = categorical_imputer(X_train, cat, int(args.random_state))  # Imputation
     logging.info(f'X_train categorical imputation complete.')
-    X_train = continuous_data(X_train, con, args.random_state)  # Imputation
+    X_train = continuous_data(X_train, con, int(args.random_state))  # Imputation
     logging.info(f'X_train continuous imputation complete.')
 
     X_test = minmax_scaling(X_test, con)  # Normalisation
-    X_test = categorical_imputer(X_test, cat, args.random_state)  # Imputation
-    X_test = continuous_data(X_test, con, args.random_state)  # Imputation
+    X_test = categorical_imputer(X_test, cat, int(args.random_state))  # Imputation
+    X_test = continuous_data(X_test, con, int(args.random_state))  # Imputation
     logging.info(f'X_test imputation complete.')
 
     if args.onehot:
@@ -120,8 +120,8 @@ def preprocessor():
         X_test = feature_encoding(X_test, Onehot=one_hot_labels)  # One hot encoding
         logging.info(f'One hot encoding complete.')
 
-    X_train, y_train = st_sampling(X_train, y_train, 0.2, args.random_state)  # Over/undersampling
-    X_test, y_test = st_sampling(X_test, y_test, 0.2, args.random_state)  # Over/undersampling
+    X_train, y_train = st_sampling(X_train, y_train, 0.2, int(args.random_state))  # Over/undersampling
+    X_test, y_test = st_sampling(X_test, y_test, 0.2, int(args.random_state))  # Over/undersampling
     logging.info(f'Sampling complete.')
 
     # Save imputed dataframes
