@@ -15,7 +15,7 @@ from imblearn.under_sampling import TomekLinks  # Undersampling
 from imblearn.over_sampling import SMOTENC  # Oversampling
 from sklearn.feature_selection import RFE, RFECV  # Recursive feature elimination - feature selection
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier  # RFE
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 
 
@@ -139,10 +139,21 @@ def ou_sampling(X_df, y_df, ratio, random_state, cat):
 
 
 # recursive feature elimination
-def rfe():
+def rfecv(X_train, y_train, n_estimators, n_folds, plotfile):
 
+    model = ExtraTreesClassifier(n_estimators=n_estimators, n_jobs=-1)
+    rfe = RFECV(model, step=1, cv=StratifiedKFold(n_folds), scoring='accuracy')
+    feature_info = rfe.fit(X_train, y_train.values.ravel())
 
+    feat_indexes = [x for x, y in enumerate(feature_info.ranking_) if y == 1]
+    feat_names = [X_train.columns[z] for z in feat_indexes]
 
+    # Plot model accuracy against feature num
+    plt.figure(figsize=(16, 6))
+    plt.xlabel('Total features selected')
+    plt.ylabel('Model accuracy')
+    plt.plot(range(1, len(feature_info.grid_scores_) + 1), feature_info.grid_scores_)
+    plt.savefig(plotfile, bbox_inches='tight')
 
-    pass
+    return feat_names
 
