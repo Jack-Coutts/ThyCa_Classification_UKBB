@@ -67,7 +67,7 @@ def cat_con_cols(df):
 # Categorical imputation using extratreesclassifier
 def categorical_imputer(df, cat, random_state):
 
-    cat_imputer = IterativeImputer(estimator=ExtraTreesClassifier(n_estimators=20, n_jobs=-1, verbose=0),
+    cat_imputer = IterativeImputer(estimator=ExtraTreesClassifier(n_estimators=30, n_jobs=-1, verbose=0),
                                    initial_strategy='most_frequent', max_iter=3, random_state=random_state, verbose=0)
 
     imputed_cat = cat_imputer.fit_transform(df[cat])
@@ -132,4 +132,7 @@ def st_sampling(X_df, y_df, ratio, random_state):
 def rfe():
 
 
+
+
     pass
+
