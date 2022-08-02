@@ -141,6 +141,9 @@ def ou_sampling(X_df, y_df, ratio, random_state, cat):
 # recursive feature elimination
 def rfecv(X_train, y_train, n_estimators, n_folds, plotfile):
 
+    X_train = pd.read_csv(X_train, sep='\t', header=0, index_col=0)
+    y_train = pd.read_csv(y_train, sep='\t', header=0, index_col=0)
+
     model = ExtraTreesClassifier(n_estimators=n_estimators, n_jobs=-1)
     rfe = RFECV(model, step=1, cv=StratifiedKFold(n_folds), scoring='accuracy')
     feature_info = rfe.fit(X_train, y_train.values.ravel())
