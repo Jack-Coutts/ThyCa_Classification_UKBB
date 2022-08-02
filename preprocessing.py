@@ -120,8 +120,8 @@ def preprocessor():
         X_test = feature_encoding(X_test, Onehot=one_hot_labels)  # One hot encoding
         logging.info(f'One hot encoding complete.')
 
-    X_train, y_train = st_sampling(X_train, y_train, 0.2, int(args.random_state))  # Over/undersampling
-    X_test, y_test = st_sampling(X_test, y_test, 0.2, int(args.random_state))  # Over/undersampling
+    X_train, y_train = ou_sampling(X_train, y_train, 0.2, int(args.random_state), cat)  # Over/undersampling
+    X_test, y_test = ou_sampling(X_test, y_test, 0.2, int(args.random_state), cat)  # Over/undersampling
     logging.info(f'Sampling complete.')
 
     # Save imputed dataframes

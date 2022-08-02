@@ -11,7 +11,8 @@ from sklearn.experimental import enable_iterative_imputer  # Iterative imputer e
 from sklearn.impute import IterativeImputer  # Once enabled iterative imputer can be imported
 from sklearn.linear_model import RidgeClassifier, BayesianRidge  # Imputation
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, OrdinalEncoder  # Normalisation & Encoding
-from imblearn.combine import SMOTETomek  # Sampling
+from imblearn.under_sampling import TomekLinks  # Undersampling
+from imblearn.over_sampling import SMOTENC  # Oversampling
 from sklearn.feature_selection import RFE, RFECV  # Recursive feature elimination - feature selection
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
@@ -121,10 +122,19 @@ def feature_encoding(dataframe, ordinal=None, Onehot=None):
     return dataframe
 
 
-# Over and undersampling with SMOTE-Tomek links
-def st_sampling(X_df, y_df, ratio, random_state):
-    smt = SMOTETomek(random_state=random_state, sampling_strategy=ratio)
-    X_res, y_res = smt.fit_resample(X_df, y_df)
+# SMOTENC and Tomek over and under-sampling
+def ou_sampling(X_df, y_df, ratio, random_state, cat):
+
+    indexes = [i for i, x in enumerate(X_df.columns) if x in cat]
+
+    # Tomek links
+    tl = TomekLinks(sampling_strategy='majority', n_jobs=-1)
+    X_res, y_res = tl.fit_resample(X_df, y_df)
+
+    # SMOTENC - SMOTE for nominal and continuous data
+    sm = SMOTENC(random_state=random_state, categorical_features=indexes, sampling_strategy=ratio, n_jobs=-1)
+    X_res, y_res = sm.fit_resample(X_res, y_res)
+
     return X_res, y_res
 
 
