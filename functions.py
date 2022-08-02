@@ -9,7 +9,7 @@ from timeit import default_timer as timer # Time how long commands take
 from sklearn.model_selection import train_test_split, StratifiedKFold  # test_train split, cross-validation
 from sklearn.experimental import enable_iterative_imputer  # Iterative imputer experimental so need to enable it
 from sklearn.impute import IterativeImputer  # Once enabled iterative imputer can be imported
-from sklearn.ensemble import ExtraTreesRegressor, ExtraTreesClassifier  # Imputation
+from sklearn.linear_model import RidgeClassifier, BayesianRidge  # Imputation
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, OrdinalEncoder  # Normalisation & Encoding
 from imblearn.combine import SMOTETomek  # Sampling
 from sklearn.feature_selection import RFE, RFECV  # Recursive feature elimination - feature selection
@@ -54,10 +54,10 @@ def cat_con_cols(df):
     num_unique_vals = [len(set([i for i in a if pd.notna(i)])) for a in columns]  # Num of unique values in a column
 
     categorical_indexes = [i for i, v in enumerate(num_unique_vals) if v <= 100
-                           and set([a % 1 for a in df[df.columns[i]].dropna()]) == set([0])]
+                           and set([a % 1 for a in df[df.columns[i]].dropna()]) == {0}]
 
     continuous_indexes = [i for i, v in enumerate(num_unique_vals) if v > 100 or
-                          set([a % 1 for a in df[df.columns[i]].dropna()]) != set([0])]
+                          set([a % 1 for a in df[df.columns[i]].dropna()]) != {0}]
 
     cat = list(df.columns[categorical_indexes])
     con = list(df.columns[continuous_indexes])
@@ -67,8 +67,8 @@ def cat_con_cols(df):
 # Categorical imputation using extratreesclassifier
 def categorical_imputer(df, cat, random_state):
 
-    cat_imputer = IterativeImputer(estimator=ExtraTreesClassifier(n_estimators=30, n_jobs=-1, verbose=0),
-                                   initial_strategy='most_frequent', max_iter=3, random_state=random_state, verbose=0)
+    cat_imputer = IterativeImputer(estimator=RidgeClassifier(), initial_strategy='most_frequent',
+                                   max_iter=10, random_state=random_state, verbose=0)
 
     imputed_cat = cat_imputer.fit_transform(df[cat])
     df.loc[:, cat] = imputed_cat
