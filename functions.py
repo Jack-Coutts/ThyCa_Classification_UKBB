@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import string
 import random
 
+from sklearnex import patch_sklearn  # Speeds up sklearn with intel patch
+patch_sklearn()  # Activate patch - changes sklearn imports below
+
 from timeit import default_timer as timer # Time how long commands take
 from sklearn.model_selection import train_test_split, StratifiedKFold  # test_train split, cross-validation
 from sklearn.experimental import enable_iterative_imputer  # Iterative imputer experimental so need to enable it
