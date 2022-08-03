@@ -22,7 +22,7 @@ def feature_selector():
 
 names = feature_selector()
 
-with open('/data/home/bt211037/dissertation/preprocessed_data/selected_features.txt', 'w') as f:
+with open('/data/home/bt211037/dissertation/selected_features.txt', 'w') as f:
     for feature in names:
         f.write(f"{feature}\n")
 
