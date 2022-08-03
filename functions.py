@@ -20,7 +20,7 @@ from sklearn.feature_selection import RFE, RFECV  # Recursive feature eliminatio
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import ExtraTreesClassifier  # RFE
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
-
+from sklearn.svm import SVC
 
 # Stopwatch to profile function runtimes
 class Stopwatch:
@@ -162,4 +162,28 @@ def rfecv(X_train, y_train, n_estimators, n_folds, plotfile):
     plt.savefig(plotfile, bbox_inches='tight')
 
     return feat_names
+
+
+def svm_hyperparam(X_train, y_train, n_iter, cv):
+
+    SVM = SVC()
+
+    search_params = {'C': np.concatenate((np.linspace(0.1, 0.95, 20), np.linspace(1, 50, 10))),
+                     'gamma': np.linspace(0.1, 1, 10)}
+
+    random_search = RandomizedSearchCV(SVM, param_distributions=search_params,
+                                       n_iter=n_iter, n_jobs=-1, cv=cv, scoring='f1')
+
+    random_search.fit(X_train, y_train)
+
+    results = random_search.cv_results_
+
+    results_df = pd.DataFrame.from_dict(results, orient='columns')
+
+    results_df.to_csv('/data/home/bt211037/dissertation/SVM_hyper_results.tsv', sep='\t')
+
+    return results_df
+
+
+
 
