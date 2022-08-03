@@ -145,7 +145,7 @@ def rfecv(X_train, y_train, n_estimators, n_folds, plotfile):
     y_train = pd.read_csv(y_train, sep='\t', header=0, index_col=0)
 
     model = ExtraTreesClassifier(n_estimators=n_estimators, n_jobs=-1)
-    rfe = RFECV(model, step=1, cv=StratifiedKFold(n_folds), scoring='accuracy')
+    rfe = RFECV(model, step=1, cv=StratifiedKFold(n_folds), scoring='f1')
     feature_info = rfe.fit(X_train, y_train.values.ravel())
 
     feat_indexes = [x for x, y in enumerate(feature_info.ranking_) if y == 1]
@@ -154,7 +154,7 @@ def rfecv(X_train, y_train, n_estimators, n_folds, plotfile):
     # Plot model accuracy against feature num
     plt.figure(figsize=(16, 6))
     plt.xlabel('Total features selected')
-    plt.ylabel('Model accuracy')
+    plt.ylabel('Model f1 score')
     plt.plot(range(1, len(feature_info.grid_scores_) + 1), feature_info.grid_scores_)
     plt.savefig(plotfile, bbox_inches='tight')
 
