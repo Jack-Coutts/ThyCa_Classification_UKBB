@@ -51,20 +51,21 @@ def preprocessor():
     X_test = continuous_data(X_test, con, args.random_state)  # Imputation
     logging.info(f'X_test imputation complete.')
 
+    '''
     if args.onehot:
         X_train = feature_encoding(X_train, Onehot=one_hot_labels)  # One hot encoding
         X_test = feature_encoding(X_test, Onehot=one_hot_labels)  # One hot encoding
         logging.info(f'One hot encoding complete.')
+    '''
 
     X_train, y_train = ou_sampling(X_train, y_train, 1, args.random_state, cat)  # Over/undersampling
-    X_test, y_test = ou_sampling(X_test, y_test, 1, args.random_state, cat)  # Over/undersampling
     logging.info(f'Sampling complete.')
 
     # Save imputed dataframes
-    X_train.to_csv('/data/home/bt211037/dissertation/preprocessed_data/X_train.tsv', sep='\t')
-    X_test.to_csv('/data/home/bt211037/dissertation/preprocessed_data/X_test.tsv', sep='\t')
-    y_train.to_csv('/data/home/bt211037/dissertation/preprocessed_data/y_train.tsv', sep='\t')
-    y_test.to_csv('/data/home/bt211037/dissertation/preprocessed_data/y_test.tsv', sep='\t')
+    X_train.to_csv(f'/data/home/bt211037/dissertation/preprocessed_data/{args.random_state}X_train.tsv', sep='\t')
+    X_test.to_csv(f'/data/home/bt211037/dissertation/preprocessed_data/{args.random_state}X_test.tsv', sep='\t')
+    y_train.to_csv(f'/data/home/bt211037/dissertation/preprocessed_data/{args.random_state}y_train.tsv', sep='\t')
+    y_test.to_csv(f'/data/home/bt211037/dissertation/preprocessed_data/{args.random_state}y_test.tsv', sep='\t')
     logging.info(f'Files saved, preprocessing complete.')
 
     return f'Preprocessing complete.'
