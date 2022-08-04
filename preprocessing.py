@@ -34,7 +34,7 @@ def preprocessor():
     logging.info(f'Test-train split complete.')
 
     cat, con = cat_con_cols(X_train)  # Get the column names of the continuous and nominal data
-    X_train[cat] = X_train[cat].astype('Int64')  # Convert categorical cols values from floats to integers - train
+    X_train[cat] = X_train[cat].astype('Int64')  # Convert categorical cols values from floats# to integers - train
     X_test[cat] = X_test[cat].astype('Int64')  # Convert categorical cols values from floats to integers - test
     logging.info(f'Categorical columns identified & converted to integer.')
 
