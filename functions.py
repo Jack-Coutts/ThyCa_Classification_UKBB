@@ -184,6 +184,3 @@ def svm_hyperparam(X_train, y_train, n_iter, cv):
 
     return results_df
 
-
-
-
