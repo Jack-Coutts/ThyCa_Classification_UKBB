@@ -198,7 +198,7 @@ def feature_select():
     pipeline.fit(X_train, y_train.values.ravel())
 
     # df of f1 scores for each cv fold and feat num
-    results_df = pd.DataFrame.from_dict(pipeline.named_steps['rfe'].cv_results, orient='columns')
+    results_df = pd.DataFrame.from_dict(pipeline.named_steps['rfe'].cv_results_, orient='columns')
 
     # Save to tsv
     results_df.to_csv('/data/home/bt211037/dissertation/RFECV_cv_results_.tsv', sep='\t')
