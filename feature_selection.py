@@ -177,11 +177,7 @@ def feature_select():
     # Column transformer to carry out normalisation and onehot encoding
     norm_onehot = ColumnTransformer(
         transformers=[('normalisation', MinMaxScaler(),
-                       continuous_indexes),
-
-                      ('OneHot', OneHotEncoder(sparse=False,
-                                               drop='if_binary'),
-                       oh_indexes)], remainder='passthrough', n_jobs=args.threads)
+                       continuous_indexes)], remainder='passthrough', n_jobs=args.threads)
 
     # Recursive feature elimination
     rfecv = RFECV(rfe_model, step=25, cv=rfe_cv, scoring='f1', n_jobs=args.threads)
