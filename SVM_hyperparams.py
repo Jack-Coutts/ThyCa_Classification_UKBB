@@ -13,7 +13,6 @@ from sklearn.impute import IterativeImputer  # Once enabled iterative imputer ca
 from sklearn.linear_model import RidgeClassifier, BayesianRidge  # Imputation
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder  # Normalisation & Encoding
 from sklearn.feature_selection import RFE, RFECV  # Recursive feature elimination - feature selection
-from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.compose import ColumnTransformer
 from imblearn.under_sampling import TomekLinks  # Undersampling
@@ -152,4 +151,76 @@ def svm_search():
     # Cross validation splitting strategy for RFE
     rfe_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=args.random_state)
 
-    pass
+    # Tomek Links undersampling
+    tl = TomekLinks(sampling_strategy='majority', n_jobs=-1)
+
+    # SMOTE oversampling
+    smote = SMOTENC(random_state=args.random_state,
+                    categorical_features=categorical_indexes,
+                    sampling_strategy=1,
+                    n_jobs=-1)
+
+    # Imputation column transformer to impute the two different data types
+    imputer = ColumnTransformer(
+        transformers=[
+            ('num', IterativeImputer(initial_strategy='mean',
+                                     max_iter=5,
+                                     random_state=args.random_state),
+             continuous_indexes),
+
+            ('cat', IterativeImputer(estimator=RidgeClassifier(),
+                                     initial_strategy='most_frequent',
+                                     max_iter=5,
+                                     random_state=args.random_state),
+             categorical_indexes)
+
+        ], n_jobs=-1)
+
+    # Column transformer to carry out normalisation and onehot encoding
+    norm_onehot = ColumnTransformer(
+        transformers=[('normalisation', MinMaxScaler(),
+                       continuous_indexes),
+
+                      ('OneHot', OneHotEncoder(sparse=False,
+                                               drop='if_binary'),
+                       oh_indexes)], remainder='passthrough', n_jobs=-1)
+
+    # Recursive feature elimination
+    rfecv = RFECV(rfe_model, step=25, cv=rfe_cv, scoring='f1', n_jobs=-1)
+
+    # SVM model
+    SVM = SVC()
+
+    # Pipeline
+    pipeline = imbpipeline(steps=[('imputer', imputer),
+                                  ('norm_onehot', norm_onehot),
+                                  ('tomek', tl),
+                                  ('smotenc', smote),
+                                  ('rfe', rfecv),
+                                  ('svm', SVM)])
+
+    # SVM search parameters
+    search_params = {'svm__C': [0.1, 1, 5],
+                     'svm__gamma': [0.25, 0.75, 1]}
+
+    # Grid search
+    grid_search = GridSearchCV(estimator=pipeline, param_grid=search_params, scoring='f1', n_jobs=-1, cv=args.K_folds)
+
+    # Fit grid search
+    grid_search.fit(X_train, y_train)
+
+    # Obtain results
+    results = grid_search.cv_results_
+
+    # Convert results to dataframe
+    results_df = pd.DataFrame.from_dict(results, orient='columns')
+
+    # Save to tsv
+    results_df.to_csv('/data/home/bt211037/dissertation/SVM_hyperparam_results.tsv', sep='\t')
+
+    return results_df
+
+
+# Hyperparameter search
+test_hyper = svm_search()
+
