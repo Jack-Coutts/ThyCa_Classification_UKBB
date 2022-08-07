@@ -105,8 +105,8 @@ def rf_hyperparams():
                                   ('model', model)])
 
     search_grid = {'model__n_estimators': [500],
-                   'model__max_features': [15],
-                   'model__max_depth': [5, 10],
+                   'model__max_features': [15, 10, 5 ,50],
+                   'model__max_depth': [5, 10, 15],
                    'model__bootstrap': [True, False]}
 
     rf_hyper_search = RandomizedSearchCV(estimator=pipeline,
