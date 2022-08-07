@@ -47,7 +47,6 @@ def cat_con_cols(df):
 def rf_hyperparams():
 
     parser = argparse.ArgumentParser(description='Random forest hyperparameter tuning.')  # Initialise parser
-    parser.add_argument('--K_folds', help='Num of stratified cross-validation folds for search', type=int, default=5)
     parser.add_argument('--random_state', default=0, type=int)
     parser.add_argument('--threads', default=-1, type=int)
     args = parser.parse_args()
@@ -126,4 +125,5 @@ def rf_hyperparams():
     return rf_hyper_search
 
 
+results = rf_hyperparams()
 
