@@ -118,7 +118,7 @@ def rf_hyperparams():
 
     rf_hyper_search.fit(X_train, y_train)
 
-    results = pd.DataFrame(pipeline.named_steps['rfe'].cv_results_)
+    results = pd.DataFrame(rf_hyper_search.cv_results_)
 
     results.to_csv('/data/home/bt211037/dissertation/rf_hyperparam_results.tsv', sep='\t')
 
