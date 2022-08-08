@@ -14,7 +14,7 @@ from sklearn.impute import IterativeImputer  # Once enabled iterative imputer ca
 
 from sklearn.linear_model import RidgeClassifier, BayesianRidge  # Imputation
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, OrdinalEncoder  # Normalisation & Encoding
-from imblearn.under_sampling import TomekLinks  # Undersampling
+from imblearn.under_sampling import TomekLinks, RandomUnderSampler  # Undersampling
 from imblearn.over_sampling import SMOTENC  # Oversampling
 from sklearn.feature_selection import RFE, RFECV  # Recursive feature elimination - feature selection
 from sklearn.pipeline import Pipeline
@@ -28,8 +28,10 @@ from sklearn.compose import ColumnTransformer
 
 from sklearn.impute import SimpleImputer
 
+
 # Find which columns are categorical and which continuous
 def cat_con_cols(df):
+
     columns = [list(df[i]) for i in df]  # Nested list of column values
     num_unique_vals = [len(set([i for i in a if pd.notna(i)])) for a in columns]  # Num of unique values in a column
 
@@ -48,6 +50,7 @@ def rf_hyperparams():
 
     parser = argparse.ArgumentParser(description='Random forest hyperparameter tuning.')  # Initialise parser
     parser.add_argument('--random_state', default=0, type=int)
+    parser.add_argument('--iterations', default=50, type=int)
     parser.add_argument('--threads', default=-1, type=int)
     args = parser.parse_args()
 
@@ -87,36 +90,54 @@ def rf_hyperparams():
                     categorical_features=categorical_indexes,
                     sampling_strategy=1)
 
-    # Simple imputation
-    simp_imputer = ColumnTransformer(
+    # Imputation column transformer to impute the two different data types
+    imputer = ColumnTransformer(
         transformers=[
-            ('num', SimpleImputer(missing_values=np.nan, strategy='mean'),
+            ('num', IterativeImputer(initial_strategy='median',
+                                     max_iter=5,
+                                     random_state=random_state),
              continuous_indexes),
 
-            ('cat', SimpleImputer(missing_values=np.nan, strategy='constant',
-                                  fill_value=4444),
-             categorical_indexes)])
+            ('cat', IterativeImputer(estimator=RidgeClassifier(),
+                                     initial_strategy='most_frequent',
+                                     max_iter=10,
+                                     random_state=random_state),
+             categorical_indexes)
+
+        ])
+
+    # RFE
+    rfe = RFE(model, step=25)
 
     # Pipeline
-    pipeline = imbpipeline(steps=[('imputer', simp_imputer),
+    pipeline = imbpipeline(steps=[('imputer', imputer),
                                   ('tomek', tl),
                                   ('smotenc', smote),
+                                  ('rfe', rfe),
                                   ('model', model)])
 
-    search_grid = {'model__n_estimators': [500],
-                   'model__max_features': [15, 10, 5 ,50],
-                   'model__max_depth': [5, 10, 15],
+    # Parameters to search
+    search_grid = {'rfe__n_features_to_select': range(20, 380, 25),
+                   'model__n_estimators': [100, 200, 500, 1000],
+                   'model__max_features': range(5, 150, 5),
+                   'model__max_depth': [5, 10, 15, 20],
                    'model__bootstrap': [True, False]}
+
+    # Undersample majority class from dataset for smaller dataset to tune hyperparams
+    rus = RandomUnderSampler(sampling_strategy=0.01, random_state=random_state)
+    X_res, y_res = rus.fit_resample(X_train, y_train)
+
 
     rf_hyper_search = RandomizedSearchCV(estimator=pipeline,
                                          param_distributions=search_grid,
-                                         n_iter=20,
-                                         cv=3,
-                                         n_jobs=10,
+                                         n_iter=args.iterations,
+                                         cv=5,
+                                         n_jobs=n_jobs,
                                          verbose=2,
-                                         random_state=random_state)
+                                         random_state=random_state,
+                                         scoring='f1')
 
-    rf_hyper_search.fit(X_train, y_train)
+    rf_hyper_search.fit(X_res, y_res)
 
     results = pd.DataFrame(rf_hyper_search.cv_results_)
 
