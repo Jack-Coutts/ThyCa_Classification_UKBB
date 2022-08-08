@@ -17,10 +17,8 @@ from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, OrdinalEncoder  #
 from imblearn.under_sampling import TomekLinks, RandomUnderSampler  # Undersampling
 from imblearn.over_sampling import SMOTENC  # Oversampling
 from sklearn.feature_selection import RFE, RFECV  # Recursive feature elimination - feature selection
-from sklearn.pipeline import Pipeline
 from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier  # RFE
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
-from sklearn.svm import SVC
 from imblearn.pipeline import Pipeline as imbpipeline
 
 from sklearn.impute import KNNImputer
@@ -127,7 +125,7 @@ def rf_hyperparams():
     rus = RandomUnderSampler(sampling_strategy=0.01, random_state=random_state)
     X_res, y_res = rus.fit_resample(X_train, y_train)
 
-
+    # Random search
     rf_hyper_search = RandomizedSearchCV(estimator=pipeline,
                                          param_distributions=search_grid,
                                          n_iter=args.iterations,
@@ -137,13 +135,16 @@ def rf_hyperparams():
                                          random_state=random_state,
                                          scoring='f1')
 
+    # Conduct random search
     rf_hyper_search.fit(X_res, y_res)
 
-    results = pd.DataFrame(rf_hyper_search.cv_results_)
+    # Store results as a dataframe
+    rf_hyper_res = pd.DataFrame(rf_hyper_search.cv_results_)
 
-    results.to_csv('/data/home/bt211037/dissertation/rf_hyperparam_results.tsv', sep='\t')
+    # Write results to a tsv file
+    rf_hyper_res.to_csv('/data/home/bt211037/dissertation/rf_hyperparam_results.tsv', sep='\t')
 
-    return rf_hyper_search
+    return rf_hyper_res
 
 
 results = rf_hyperparams()
