@@ -13,7 +13,7 @@
 
 This research was conducted using data from UK Biobank, a major biomedical database: [www.ukbiobank.ac.uk](https://www.ukbiobank.ac.uk/).
 
-Specifically, this work used binary disease data for 394,884 individuals and 787 disease as well as phenotype data for 390 phenotypes and 454,119 individuals. The phenotypes used included lifestyle factors, biological samples e.g.blood samples, socioeconomic factors, family history, physical measures e.g.height, and genetic principle components.
+Specifically, this work used binary disease data for 394,884 individuals and 787 disease as well as phenotype data for 390 phenotypes and 454,119 individuals. The phenotypes used included lifestyle factors, biological samples e.g. Blood samples, socioeconomic factors, family history, physical measures e.g. Height, and genetic principle components.
 
 *Reference:*
 
@@ -22,15 +22,17 @@ Sudlow, C. et al. (2015) ‘UK Biobank: An Open Access Resource for Identifying 
 
 ## Methodology
 
-The figure below shows the machine learning workflow used for this work. Following data preprocessing and manual feature selection, recursive feature elimination (RFE) was used to select the optimal features for the predicitve models. However, models were also tested with the full feature set. Random undersampling was used to reduce the class imbalance and the need for SMOTE oversampling. Hyperparameter tuning was carried out on the full preproccessing and classificatio pipeline which included:
+The figure below shows the machine learning workflow used for this work. Following data pre-processing and manual feature selection, recursive feature elimination (RFE) was used to select the optimal features for the predictive models. However, models were also tested with the full feature set. Random undersampling was used to reduce the class imbalance and the need for SMOTE oversampling. Hyperparameter tuning was carried out on the full pre-processing and classification pipeline which included:
 
-1. Imputation with either Median or Most Frequent, KNN, or Multimple Imputation (Iterative Imputer).
-2. Onehot encoding and normalisation
-3. Tomek Links undersampling
-4. SMOTE oversampling 
-5. Model Training with either Support Vector Machine, Random Forest, or Mulitlayer Perceptron
+1.	Imputation with either Median or Most Frequent, KNN, or Multiple Imputation (Iterative Imputer).
+2.	One hot encoding and normalisation
+3.	Tomek Links undersampling
+4.	SMOTE oversampling
+5.	Model Training with either Support Vector Machine, Random Forest, or Multilayer Perceptron
 
-After the optimal hyperparamters were found, each model was evaluated on the holdout test data and SHAP analysis was conducted on the best performing model. 
+
+After the optimal hyperparameters were found, each model was evaluated on the holdout test data and SHAP analysis was conducted on the best performing model.
+
 
 <p align="center">
 <img src="https://github.com/Jack-Coutts/ThyCa_Classification_UKBB/blob/main/visualisations/thyca_class_pipeline.png" width=75% height=75% class="center">
