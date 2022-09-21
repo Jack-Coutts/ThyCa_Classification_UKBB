@@ -8,5 +8,12 @@
 
 *The use of machine learning techniques in biomedical research is on the rise and diagnosis by machine learning models is becoming available for an increasing number of conditions. This work looked to utilise three machine learning models using phenotype data from UK Biobank to address the limitations of current diagnostic techniques and classify individuals with thyroid cancer. The random forest, support vector machine, and multilayer perceptron models evaluated were all found to perform poorly on the dataset. These results suggest that for thyroid cancer diagnosis, the phenotype features in the UK Biobank do not contain enough information about the thyroid for the predictive models to succeed.*
 
+## Data Source 
 
-### Requirements:
+This research was conducted using data from UK Biobank, a major biomedical database: [www.ukbiobank.ac.uk](https://www.ukbiobank.ac.uk/).
+
+Specifically, this work used binary disease data for 394,884 individuals and 787 disease as well as phenotype data for 390 phenotypes and 454,119 individuals. The phenotypes used included lifestyle factors, biological samples e.g.blood samples, socioeconomic factors, family history, physical measures e.g.height, and genetic principle components.
+
+*Reference:*
+
+Sudlow, C. et al. (2015) ‘UK Biobank: An Open Access Resource for Identifying the Causes of a Wide Range of Complex Diseases of Middle and Old Age’, PLoS Medicine, 12(3), p. e1001779. Available at: https://doi.org/10.1371/journal.pmed.1001779.
